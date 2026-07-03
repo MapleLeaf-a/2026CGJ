@@ -21,7 +21,7 @@ public class Crocodile : MonoBehaviour
     public Transform anchorPos;     // 锚点位置
     private float alertRange = 2.5f;   // 警戒范围
     private float attackRange = 0.5f;  // 攻击范围
-    private float anchorRange = 3f;  // 锚点范围（离开锚点太远会返回）
+    private float anchorRange = 5f;  // 锚点范围（离开锚点太远会返回）
     private float defaultStateDuration = 1f; // 默认状态持续时间
 
 
@@ -43,9 +43,10 @@ public class Crocodile : MonoBehaviour
     void Update()
     {
         // 【核心判定】检查是否需要立刻触发“回锚”状态
-        // 规则：只要不是正在“回锚”，不是“懵”的状态，且离锚点超过最大距离，就立刻强制切入！
+        // 规则：只要不是正在“回锚”，不是“懵”“愤怒”的状态，且离锚点超过最大距离，就立刻强制切入！
         if (currentState != CrocodileState.Returning && 
-            currentState != CrocodileState.Stunned) // 晕了就别动了
+            currentState != CrocodileState.Stunned && 
+            currentState != CrocodileState.Angry) 
         {
             float distToAnchor = Vector3.Distance(transform.position, anchorPos.position);
             if (distToAnchor > anchorRange)
@@ -158,12 +159,15 @@ public class Crocodile : MonoBehaviour
 
     private void UpdateAngry()
     {
-        Debug.Log("生气！");
+        Debug.Log("愤怒状态：追击玩家");
+        Vector3 direction = (player.position - transform.position).normalized;
+        float speed = 3.1f; // 移动速度
+        MoveTowards(direction, speed);
     }
 
     private void UpdateStunned()
     {
-        throw new NotImplementedException();
+        Debug.Log("懵了");
     }
 
     private void UpdateReturning()
@@ -222,5 +226,40 @@ public class Crocodile : MonoBehaviour
     {
         transform.Translate(directions[UnityEngine.Random.Range(0, directions.Length)] * 0.1f);
         Debug.Log("无目的游走");        
+    }
+
+    private void GetDownToWater()
+    {
+        Debug.Log("下水");
+    }
+
+    public void GetDamaged()
+    {
+        float rand = UnityEngine.Random.Range(0f, 1f);
+        if (rand < 0.4f) 
+        {
+            // 40% 懵
+            ChangeState(CrocodileState.Stunned);
+            return;
+        }
+        else if (rand < 0.5f) // 0.4 + 0.1
+        {
+            // 10% 向人方向移动（试探性靠近）
+            Vector3 direction = (player.position - transform.position).normalized;
+            float speed = 0.5f; // 移动速度
+            MoveTowards(direction, speed);
+            Debug.Log("试探性靠近玩家");
+        }
+        else if (rand < 0.8f) // 0.5+0.3
+        {
+            // 30% 被激怒
+            ChangeState(CrocodileState.Angry);
+            return;
+        }
+        else // 剩下的 20%
+        {
+            // 20% 下水
+            GetDownToWater();
+        }
     }
 }
