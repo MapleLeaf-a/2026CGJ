@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,8 +16,6 @@ public class Shovel : MonoBehaviour
 
     void Update()
     {
-        if (player == null) return;
-
         // 1. 获取玩家脚本里计算好的目标位置（那个被限制在半径内的点）
         Vector3 targetPos = player.targetPosition;
 
@@ -29,5 +28,16 @@ public class Shovel : MonoBehaviour
 
         // 4. 应用到铲子的旋转上
         transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Hit();            
+        }
+    }
+
+    private void Hit()
+    {
+        
+        Debug.Log("挥动铲子！");
     }
 }
