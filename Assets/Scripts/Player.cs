@@ -11,9 +11,10 @@ public class Player : MonoBehaviour
     private float yMin = -4.5f;
     private float yMax = 4.5f;
 
+
     // 这两个变量用于控制鼠标跟随半径
     public float mouseFollowRadius = 2.5f; // 鼠标可以自由活动的半径
-    private Vector3 targetPosition;        // 玩家实际应该前往的目标点（鼠标锁定方向的位置）
+    public Vector3 targetPosition;        // 玩家实际应该前往的目标点（鼠标锁定方向的位置）
 
     void Update()
     {

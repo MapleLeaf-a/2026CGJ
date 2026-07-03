@@ -168,6 +168,24 @@ public class Crocodile : MonoBehaviour
     private void UpdateStunned()
     {
         Debug.Log("懵了");
+
+        if (stateTimer <= 0)
+        {
+            float dist = Vector3.Distance(transform.position, player.position);
+            if (dist > alertRange)
+            {
+                ChangeState(CrocodileState.Idle);
+            }
+            else
+            {
+                ChangeState(CrocodileState.Alert);
+            }
+            stateTimer = defaultStateDuration;
+        }
+        else
+        {
+            stateTimer -= Time.deltaTime;
+        }
     }
 
     private void UpdateReturning()
@@ -213,7 +231,6 @@ public class Crocodile : MonoBehaviour
     /// </summary>
     private void BathSun()
     {
-
         Debug.Log("晒太阳");
     }
 
@@ -242,17 +259,17 @@ public class Crocodile : MonoBehaviour
             ChangeState(CrocodileState.Stunned);
             return;
         }
-        else if (rand < 0.5f) // 0.4 + 0.1
+        else if (rand < 0.6f) // 0.4 + 0.2
         {
-            // 10% 向人方向移动（试探性靠近）
+            // 20% 向人方向移动（试探性靠近）
             Vector3 direction = (player.position - transform.position).normalized;
             float speed = 0.5f; // 移动速度
             MoveTowards(direction, speed);
             Debug.Log("试探性靠近玩家");
         }
-        else if (rand < 0.8f) // 0.5+0.3
+        else if (rand < 0.8f) // 0.6 + 0.2
         {
-            // 30% 被激怒
+            // 20% 被激怒
             ChangeState(CrocodileState.Angry);
             return;
         }
