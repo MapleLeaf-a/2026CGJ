@@ -1,19 +1,43 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Shovel : MonoBehaviour
 {
     public float attackCooldown = 0.5f; // 攻击冷却时间
     private float lastAttackTime = 0f;
 
+
+    public Image cooldownMaskImage;
+
     void Start()
     {
-        
+        // 初始化：设为一个很久远的时间，确保开始时冷却就已经结束
+        lastAttackTime = -attackCooldown;
+
+        // 初始化：游戏开始时，冷却是转完的（没有灰色遮罩）
+        if (cooldownMaskImage != null)
+        {
+            cooldownMaskImage.fillAmount = 0f; // 0 表示完全透明（无冷却）
+        }
     }
 
     void Update()
     {
+        if (cooldownMaskImage != null)
+        {
+            // 计算已经过去的时间
+            float timeSinceLastAttack = Time.time - lastAttackTime;
+            
+            // 计算冷却进度比例 (0 到 1)
+            // 如果没有攻击过（timeSinceLastAttack很大），Mathf.Clamp01 会保证结果限制在 0 到 1
+            float fillProgress = 1f - Mathf.Clamp01(timeSinceLastAttack / attackCooldown);
+
+            // 应用到 UI 上
+            cooldownMaskImage.fillAmount = fillProgress;
+        }
+
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             if (Time.time - lastAttackTime >= attackCooldown)

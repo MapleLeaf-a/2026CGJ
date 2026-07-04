@@ -167,7 +167,7 @@ public class Crocodile : MonoBehaviour
     {
         Debug.Log("愤怒状态：追击玩家");
         Vector3 direction = (player.position - transform.position).normalized;
-        float speed = 3.1f; // 移动速度
+        float speed = 2.5f; // 移动速度
         MoveTowards(direction, speed);
     }
 
