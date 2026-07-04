@@ -20,13 +20,18 @@ public class Crocodile : MonoBehaviour
     public Transform player;        // 玩家位置
     public Transform anchorPos;     // 锚点位置
     private float alertRange = 2.5f;   // 警戒范围
-    private float attackRange = 0.5f;  // 攻击范围
+    //private float attackRange = 0.5f;  // 攻击范围
     private float anchorRange = 5f;  // 锚点范围（离开锚点太远会返回）
     private float defaultStateDuration = 1f; // 默认状态持续时间
 
+    
+    [Header("水池与下水")]
+    public Transform poolCenter; // 水池中心
+    public float diveSpeed = 2f; // 下水时的冲刺速度
+    
 
     private float stateTimer = 0f;  // 状态计时器（用于发呆、懵等）
-    
+
     static readonly Vector3[] directions = new Vector3[]
     {
         Vector3.up,
@@ -43,10 +48,11 @@ public class Crocodile : MonoBehaviour
     void Update()
     {
         // 【核心判定】检查是否需要立刻触发“回锚”状态
-        // 规则：只要不是正在“回锚”，不是“懵”“愤怒”的状态，且离锚点超过最大距离，就立刻强制切入！
+        // 规则：只要不是正在“回锚”，不是“懵”“愤怒”“下水”的状态，且离锚点超过最大距离，就立刻强制切入！
         if (currentState != CrocodileState.Returning && 
             currentState != CrocodileState.Stunned && 
-            currentState != CrocodileState.Angry) 
+            currentState != CrocodileState.Angry && 
+            currentState != CrocodileState.Diving) 
         {
             float distToAnchor = Vector3.Distance(transform.position, anchorPos.position);
             if (distToAnchor > anchorRange)
@@ -215,7 +221,9 @@ public class Crocodile : MonoBehaviour
 
     private void UpdateDiving()
     {
-        throw new NotImplementedException();
+        Vector3 dirToPool = (poolCenter.position - transform.position).normalized;
+
+        transform.Translate(dirToPool * diveSpeed * Time.deltaTime);
     }
 
     private void ChangeState(CrocodileState newState)
@@ -245,11 +253,6 @@ public class Crocodile : MonoBehaviour
         Debug.Log("无目的游走");        
     }
 
-    private void GetDownToWater()
-    {
-        Debug.Log("下水");
-    }
-
     public void GetDamaged()
     {
         float rand = UnityEngine.Random.Range(0f, 1f);
@@ -276,7 +279,18 @@ public class Crocodile : MonoBehaviour
         else // 剩下的 20%
         {
             // 20% 下水
-            GetDownToWater();
+            ChangeState(CrocodileState.Diving);
+            return;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // 检测碰撞到的物体是不是水池
+        if (other.CompareTag("Water")) 
+        {
+            Destroy(gameObject); // 直接销毁鳄鱼
+            Debug.Log("鳄鱼下水，销毁");
         }
     }
 }
