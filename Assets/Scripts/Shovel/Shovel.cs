@@ -11,6 +11,8 @@ public class Shovel : MonoBehaviour
 
     public Image cooldownMaskImage;
 
+    public Shake_Camera mainCamera; // 摄像机抖动脚本引用
+
     void Start()
     {
         // 初始化：设为一个很久远的时间，确保开始时冷却就已经结束
@@ -51,6 +53,10 @@ public class Shovel : MonoBehaviour
     private void Hit()
     {        
         Debug.Log("挥动铲子！");
+
+
+        mainCamera.randomShake = true; // 触发摄像机抖动
+
 
         // 1. 这里可以使用 物理扫描（Overlap） 方式，而不依赖 OnTrigger 的持续碰撞
         // 获取铲子碰撞体的信息
