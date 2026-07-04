@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public enum PlayerState
@@ -8,7 +9,6 @@ public enum PlayerState
     Normal,      // 正常移动
     Struggle,    // 挣扎中
     Escape,     //挣脱后的无敌时间
-    Dead         // 死亡
 }
 
 public class Player : MonoBehaviour
@@ -77,9 +77,6 @@ public class Player : MonoBehaviour
                 //无敌状态下，玩家可以自由移动，但不处理挣扎逻辑
 
                 UpdateNormalMovement();
-                break;
-            case PlayerState.Dead:
-                // 死亡状态，不做任何操作
                 break;
         }
 
@@ -261,7 +258,8 @@ public class Player : MonoBehaviour
         }
 
         Debug.Log("挣扎失败！玩家被鳄鱼吃掉了！");
-        // TODO: 播放死亡动画、触发 GameOver UI 等
+        
+        SceneManager.LoadScene("GameOver"); // 加载游戏结束场景
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
