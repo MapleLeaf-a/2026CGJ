@@ -16,6 +16,8 @@ public class ShovelHead : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0) return; // 游戏暂停时不处理铲子头部位置更新
+
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0f;
 

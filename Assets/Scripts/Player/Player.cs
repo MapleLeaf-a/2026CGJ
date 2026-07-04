@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        if (Time.timeScale == 0) return; // 游戏暂停时不处理玩家输入
+
         // --- 移动逻辑 ---
         if (Input.GetKey(KeyCode.W)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.up);
         if (Input.GetKey(KeyCode.S)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.down);
