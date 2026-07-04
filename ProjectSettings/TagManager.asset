@@ -6,16 +6,18 @@ TagManager:
   tags:
   - Enemy
   - Water
+  - Anchor
+  - Wall
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Anchor
   - Water
   - UI
-  - 
-  - 
-  - 
+  - Enemy
+  - Wall
+  - Player
   - 
   - 
   - 

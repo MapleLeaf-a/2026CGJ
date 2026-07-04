@@ -65,7 +65,7 @@ public class Shovel : MonoBehaviour
         // 2. 用铲子的碰撞体去探测世界（探测范围就是铲子当前挥舞到的位置）
         // 使用 OverlapCollider 可以一瞬间检测铲子覆盖的范围内有没有鳄鱼
         ContactFilter2D filter = new ContactFilter2D();
-        filter.SetLayerMask(LayerMask.GetMask("Default")); // 默认层
+        filter.SetLayerMask(LayerMask.GetMask("Enemy")); // 敌人层
         filter.useTriggers = true; // 允许检测触发器
 
         List<Collider2D> results = new List<Collider2D>();

@@ -30,6 +30,10 @@ public class Crocodile : MonoBehaviour
     public float diveSpeed = 2f; // 下水时的冲刺速度
     
 
+    private GameManager gameManager;
+    private Anchor assignedAnchor; // 记住自己是哪个锚点的人
+
+
     private float stateTimer = 0f;  // 状态计时器（用于发呆、懵等）
 
     static readonly Vector3[] directions = new Vector3[]
@@ -43,6 +47,28 @@ public class Crocodile : MonoBehaviour
     void Start()
     {
         currentState = CrocodileState.Idle;
+
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            player = playerObj.transform;
+        }
+        else
+        {
+            Debug.LogError("场景中找不到带有 'Player' 标签的物体！请检查标签设置。");
+        }
+
+        anchorPos = assignedAnchor.transform;
+
+        GameObject poolObj = GameObject.FindGameObjectWithTag("Water");
+        if (poolObj != null)
+        {
+            poolCenter = poolObj.transform;
+        }
+        else
+        {
+            Debug.LogError("场景中找不到带有 'Water' 标签的物体！请检查标签设置。");
+        }
     }
 
     void Update()
@@ -85,7 +111,16 @@ public class Crocodile : MonoBehaviour
         }
     }
 
-    
+    public void SetGameManager(GameManager manager)
+    {
+        gameManager = manager;
+    }
+
+    public void SetAssignedAnchor(Anchor anchor) 
+    {
+        assignedAnchor = anchor;
+    }
+
     private void UpdateIdle()
     {
         // 检测触发条件：玩家是否进入警戒范围？
@@ -289,7 +324,13 @@ public class Crocodile : MonoBehaviour
         // 检测碰撞到的物体是不是水池
         if (other.CompareTag("Water")) 
         {
-            Destroy(gameObject); // 直接销毁鳄鱼
+            // 通知 GameManager：有一头鳄鱼死了（把锚点传回去）
+            if (gameManager != null)
+            {
+                gameManager.OnCrocodileDestroyed(assignedAnchor);
+            }
+
+            Destroy(gameObject); // 销毁鳄鱼
             Debug.Log("鳄鱼下水，销毁");
         }
     }
