@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
@@ -234,6 +235,7 @@ public class GameManager : MonoBehaviour
         if (clearedAnchors >= totalAnchors)
         {
             Debug.Log("胜利！所有锚点的鳄鱼已被清除！");
+            SceneManager.LoadScene("GameOver"); // 加载游戏结束场景
         }
     }
 
