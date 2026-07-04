@@ -27,7 +27,7 @@ public class Shovel : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale == 0) return; // 游戏暂停时不处理铲子攻击逻辑
+        if (Time.timeScale != 1) return; // 游戏暂停时不处理铲子攻击逻辑
 
         if (cooldownMaskImage != null)
         {
