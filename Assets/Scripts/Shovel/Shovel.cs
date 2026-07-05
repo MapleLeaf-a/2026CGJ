@@ -13,6 +13,8 @@ public class Shovel : MonoBehaviour
 
     public Shake_Camera mainCamera; // 摄像机抖动脚本引用
 
+    public AudioSource audioSource;
+
     void Start()
     {
         // 初始化：设为一个很久远的时间，确保开始时冷却就已经结束
@@ -56,6 +58,7 @@ public class Shovel : MonoBehaviour
     {        
         Debug.Log("挥动铲子！");
 
+        audioSource.Play();
 
         mainCamera.randomShake = true; // 触发摄像机抖动
 

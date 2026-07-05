@@ -278,7 +278,7 @@ public class Crocodile : MonoBehaviour
         Debug.Log($"state: {newState}");
     
         currentState = newState;
-        stateTimer = 0f; // 重置状态计时器
+        stateTimer = defaultStateDuration; // 重置状态计时器
     
         // 更新状态图片
         int stateIndex = (int)newState;
