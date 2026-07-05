@@ -53,8 +53,12 @@ public class Player : MonoBehaviour
 
     public static bool isGamePaused = false; // 游戏是否处于暂停状态
 
+    private SpriteRenderer spriteRenderer;
+
     void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         // 初始化：游戏开始时，挣扎UI是隐藏的
         if (strugglePanel != null)
         {
@@ -122,8 +126,16 @@ public class Player : MonoBehaviour
         // --- 移动逻辑 ---
         if (Input.GetKey(KeyCode.W)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.up);
         if (Input.GetKey(KeyCode.S)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.down);
-        if (Input.GetKey(KeyCode.A)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.left);
-        if (Input.GetKey(KeyCode.D)) transform.Translate(moveSpeed * Time.deltaTime * Vector3.right);
+        if (Input.GetKey(KeyCode.A))
+        {
+            transform.Translate(moveSpeed * Time.deltaTime * Vector3.left);
+            spriteRenderer.flipX = true;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            transform.Translate(moveSpeed * Time.deltaTime * Vector3.right);
+            spriteRenderer.flipX = false;
+        }
 
         // --- 边界限制逻辑 ---
         // 获取当前玩家位置

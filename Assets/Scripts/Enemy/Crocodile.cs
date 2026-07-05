@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum CrocodileState
 {
@@ -19,9 +20,9 @@ public class Crocodile : MonoBehaviour
     public CrocodileState currentState;
     public Transform player;        // 玩家位置
     public Transform anchorPos;     // 锚点位置
-    private float alertRange = 2.5f;   // 警戒范围
-    //private float attackRange = 0.5f;  // 攻击范围
-    private float anchorRange = 5f;  // 锚点范围（离开锚点太远会返回）
+    public float alertRange = 2.5f;   // 警戒范围
+    public float anchorRange = 5f;  // 锚点范围（离开锚点太远会返回）
+
     private float defaultStateDuration = 1f; // 默认状态持续时间
 
     
@@ -29,10 +30,16 @@ public class Crocodile : MonoBehaviour
     public Transform poolCenter; // 水池中心
     public float diveSpeed = 2f; // 下水时的冲刺速度
     
+    [Header("状态图片")]
+    public SpriteRenderer stateSpriteRenderer; // 用于显示状态图片的SpriteRenderer
+
+    [Header("状态图片数据")]
+    [SerializeField] private CrocodileStateDataSO stateData;
 
     private GameManager gameManager;
     private Anchor assignedAnchor; // 记住自己是哪个锚点的人
 
+    private SpriteRenderer spriteRenderer; // 用于翻转鳄鱼的SpriteRenderer
 
     private float stateTimer = 0f;  // 状态计时器（用于发呆、懵等）
 
@@ -43,10 +50,14 @@ public class Crocodile : MonoBehaviour
         Vector3.left,
         Vector3.right
     };
+    
+
+    public List<Image> CrocodileStateImages;
 
     void Start()
     {
         currentState = CrocodileState.Idle;
+        stateSpriteRenderer.sprite = null; // 初始状态没有图片
 
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
@@ -69,6 +80,8 @@ public class Crocodile : MonoBehaviour
         {
             Debug.LogError("场景中找不到带有 'Water' 标签的物体！请检查标签设置。");
         }
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void Update()
@@ -257,16 +270,26 @@ public class Crocodile : MonoBehaviour
     private void UpdateDiving()
     {
         Vector3 dirToPool = (poolCenter.position - transform.position).normalized;
-
-        transform.Translate(dirToPool * diveSpeed * Time.deltaTime);
+        MoveTowards(dirToPool, diveSpeed);
     }
 
     private void ChangeState(CrocodileState newState)
     {
         Debug.Log($"state: {newState}");
-
+    
         currentState = newState;
         stateTimer = 0f; // 重置状态计时器
+    
+        // 更新状态图片
+        int stateIndex = (int)newState;
+        if (stateIndex < stateData.stateImages.Count)
+        {
+            stateSpriteRenderer.sprite = stateData.stateImages[stateIndex];
+        }
+        else
+        {
+            stateSpriteRenderer.sprite = null; // 如果索引超出范围，清空图片
+        }
     }
 
     /// <summary>
@@ -279,12 +302,15 @@ public class Crocodile : MonoBehaviour
 
     private void MoveTowards(Vector3 direction, float speed)
     {
+        spriteRenderer.flipX = direction.x > 0;
         transform.Translate(direction * speed * Time.deltaTime);
     }
 
     private void MoveIdly()
     {
-        transform.Translate(directions[UnityEngine.Random.Range(0, directions.Length)] * 0.1f);
+        int index = UnityEngine.Random.Range(0, directions.Length);
+        spriteRenderer.flipX = directions[index].x > 0;
+        transform.Translate(directions[index] * 0.1f);
         Debug.Log("无目的游走");        
     }
 
